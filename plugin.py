@@ -234,8 +234,10 @@ class Plugin(object):
             traceback.print_exc()
 
     async def setup_connect(self):
+        print("Setup connect")
         # get input 'foo' from like 'g foo'
         await sio.emit("addInputHook", data=(self.cfg["input_hook"]))
+        print("Setup connect done")
 
     async def loop(self):
         await sio.connect(f"http://localhost:{self.port}")
@@ -243,8 +245,17 @@ class Plugin(object):
 
 
 if __name__ == "__main__":
-    # asyncio
-    sio = socketio.AsyncClient()
-    p = Plugin()
-    sio.register_namespace(p.api)
-    asyncio.run(p.loop())
+    while True:
+        try:
+            # asyncio
+            sio = socketio.AsyncClient()
+            p = Plugin()
+            sio.register_namespace(p.api)
+            asyncio.run(p.loop())
+        except RuntimeError:
+            pass
+        except:
+            import traceback
+
+            traceback.print_exc()
+            break
