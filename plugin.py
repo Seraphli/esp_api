@@ -15,9 +15,11 @@ DEFAULT_CONFIG = {
     "input_hook": "api",
 }
 
+o_print = print
+
 
 def print_flush(*args, **kwargs):
-    print(*args, **kwargs)
+    o_print(*args, **kwargs)
     sys.stdout.flush()
 
 
