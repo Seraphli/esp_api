@@ -31,13 +31,20 @@ class PluginApi(socketio.AsyncClientNamespace):
         super().__init__()
         self.elem_count = 0
         self.parent = parent
+        self.connected = False
 
     async def on_connect(self):
         print("Connected")
+        if self.connected:
+            print("Disconnect because already connected")
+            asyncio.get_running_loop().stop()
+            return
         await self.parent.setup_connect()
+        self.connected = True
 
     def on_disconnect(self):
         print("Disconnected")
+        asyncio.get_running_loop().stop()
 
     def on_echo(self, data):
         print("Echo:", data)
@@ -250,8 +257,11 @@ class Plugin(object):
         print("Setup connect done")
 
     async def loop(self):
+        print("Run loop")
         await sio.connect(f"http://localhost:{self.port}")
+        print("Sio Connected")
         await sio.wait()
+        print("Loop end")
 
 
 if __name__ == "__main__":
