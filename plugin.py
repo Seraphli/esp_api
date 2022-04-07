@@ -98,7 +98,8 @@ class PluginApi(socketio.AsyncClientNamespace):
 
     async def on_processContent(self, content):
         print("Process content:", content)
-        await self.parent.process_content(content)
+        hook = content.split(" ")[0]
+        await self.parent.hooks[hook](content[len(hook) + 1 :])
 
     def on_modeFlag(self, flags):
         print("Mode flag:", flags)
@@ -214,6 +215,7 @@ class Plugin(object):
         self.load_config()
         self.api = PluginApi(self)
         self.handler = APIHandler(self)
+        self.hooks = {self.cfg["input_hook"]: self.process_content}
 
     def load_config(self):
         path = user_data_dir(APP_NAME, False, roaming=True)
@@ -253,7 +255,8 @@ class Plugin(object):
     async def setup_connect(self):
         print("Setup connect")
         # get input 'foo' from like 'g foo'
-        await sio.emit("addInputHook", data=(self.cfg["input_hook"]))
+        for hook in self.hooks.keys():
+            await sio.emit("addInputHook", data=(hook))
         print("Setup connect done")
 
     async def loop(self):
