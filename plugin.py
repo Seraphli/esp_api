@@ -218,7 +218,7 @@ class Plugin(object):
         self.hooks = {self.cfg["input_hook"]: self.process_content}
 
     def load_config(self):
-        path = user_data_dir(APP_NAME, False, roaming=True)
+        path = user_config_dir(APP_NAME, False, roaming=True)
         with codecs.open(path + "/api.json") as f:
             config = json.load(f)
         self.port = config["apiPort"]
