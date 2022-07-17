@@ -261,7 +261,7 @@ class Plugin(object):
 
     async def loop(self):
         print("Run loop")
-        await sio.connect(f"http://localhost:{self.port}")
+        await sio.connect(f"http://127.0.0.1:{self.port}")
         print("Sio Connected")
         await sio.wait()
         print("Loop end")
